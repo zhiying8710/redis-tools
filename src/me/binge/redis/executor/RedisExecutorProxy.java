@@ -50,7 +50,6 @@ public class RedisExecutorProxy implements MethodInterceptor {
         }
         Pipe pipe = method.getAnnotation(Pipe.class);
         if (pipe != null) {
-            System.err.println(pipe);
             JedisPipelineThreadLocal.set(jedis.pipelined());
         }
         boolean broken = false;
