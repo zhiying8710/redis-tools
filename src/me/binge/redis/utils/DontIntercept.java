@@ -1,4 +1,4 @@
-package me.binge.redis.annotation;
+package me.binge.redis.utils;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,12 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * if a method has this annotation on him, mean this method need a redis transaction.
+ * use for class proxy, if this annotation on a method, means this method will not be intercept(dont do any aop thing)
  * @author Admin
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Trans {
+public @interface DontIntercept {
 
 }
