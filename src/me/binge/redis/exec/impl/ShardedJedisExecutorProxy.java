@@ -10,11 +10,8 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.apache.commons.lang3.StringUtils;
 
 import redis.clients.jedis.ShardedJedis;
-import redis.clients.jedis.ShardedJedisPool;
 
 public class ShardedJedisExecutorProxy extends RedisExecutorProxy<ShardedJedisExecutor, ShardedJedis> {
-
-    private ShardedJedisPool pool;
 
     @Override
     public Object intercept(Object obj, Method method, Object[] args,

@@ -10,11 +10,8 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.apache.commons.lang3.StringUtils;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisSentinelPool;
 
 public class SentinelJedisExecutorProxy extends RedisExecutorProxy<SentinelJedisExecutor, Jedis> {
-
-    private JedisSentinelPool pool;
 
     @Override
     public Object intercept(Object obj, Method method, Object[] args,

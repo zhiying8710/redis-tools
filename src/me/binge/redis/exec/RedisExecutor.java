@@ -35,7 +35,7 @@ public abstract class RedisExecutor<T extends JedisCommands> implements JedisCom
     }
 
     @DontIntercept
-    public void setThreadLocal(RedisThreadLocal<T> rtl) {
+    void setThreadLocal(RedisThreadLocal<T> rtl) {
         this.rtl = rtl;
     }
 
