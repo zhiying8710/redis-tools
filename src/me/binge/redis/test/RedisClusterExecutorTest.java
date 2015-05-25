@@ -18,11 +18,13 @@ import me.binge.redis.exec.impl.ClusterJedisExecutorProxy;
 import me.binge.redis.exec.impl.JedisExecutorProxy;
 import me.binge.redis.exec.impl.SentinelJedisExecutorProxy;
 import me.binge.redis.exec.impl.ShardedJedisExecutorProxy;
+import me.binge.redis.utils.RedisCmdPair;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisSentinelPool;
@@ -209,8 +211,14 @@ public class RedisClusterExecutorTest {
 //        test(100);
 //        test(200);
 //        test(500);
-        test(1000);
+//        test(1000);
 
+        JedisExecutorProxy proxy = new JedisExecutorProxy();
+        JedisPool pool = new JedisPool("127.0.0.1");
+        proxy.setPool(pool);
+        RedisExecutor<Jedis> executor = proxy.getExecutor();
+        Object cmd = executor.cmd(new RedisCmdPair("ping", null));
+        System.out.println(cmd);
     }
 
 }

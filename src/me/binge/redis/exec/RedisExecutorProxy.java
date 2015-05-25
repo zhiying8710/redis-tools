@@ -1,5 +1,7 @@
 package me.binge.redis.exec;
 
+import com.google.common.reflect.TypeToken;
+
 import me.binge.redis.exec.impl.RedisThreadLocal;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
