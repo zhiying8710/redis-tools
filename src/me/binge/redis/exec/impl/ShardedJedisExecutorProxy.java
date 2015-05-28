@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 import me.binge.redis.exception.RedisExecExecption;
 import me.binge.redis.exec.RedisExecutorProxy;
+import me.binge.redis.utils.Close;
 import me.binge.redis.utils.DontIntercept;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -20,6 +21,11 @@ public class ShardedJedisExecutorProxy extends RedisExecutorProxy<ShardedJedisEx
         if (method.getAnnotation(DontIntercept.class) != null) {
             return proxy.invokeSuper(obj, args);
         }
+
+        if (method.getAnnotation(Close.class) != null) {
+            return proxy.invokeSuper(obj, new Object[]{pool});
+        }
+
         ShardedJedis jedis = pool.getResource();
         this.rtl.conn(jedis);
         boolean broken = false;

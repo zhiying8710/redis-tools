@@ -1,5 +1,7 @@
 package me.binge.redis.exec;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -7,6 +9,7 @@ import java.util.Set;
 
 import me.binge.redis.exception.RedisExecExecption;
 import me.binge.redis.exec.impl.RedisThreadLocal;
+import me.binge.redis.utils.Close;
 import me.binge.redis.utils.DontIntercept;
 import me.binge.redis.utils.EvolutionMethodUtils;
 import me.binge.redis.utils.RedisCmdPair;
@@ -24,6 +27,19 @@ public abstract class RedisExecutor<T extends JedisCommands> implements JedisCom
     public abstract Response<List<Object>> pipeline(List<RedisCmdPair> cmdPairs) throws Exception;
 
     public abstract List<Object> multi(List<RedisCmdPair> cmdPairs) throws Exception;
+
+    /**
+     * @param closeable no need a {@link Closeable} instance, null is fine, in AOP, will fill a {@link Closeable} instance.
+     */
+    @Close
+    public void close(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public <E> E cmd(RedisCmdPair cmdPair) {

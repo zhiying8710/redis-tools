@@ -1,7 +1,5 @@
 package me.binge.redis.exec;
 
-import com.google.common.reflect.TypeToken;
-
 import me.binge.redis.exec.impl.RedisThreadLocal;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -55,28 +53,10 @@ public abstract class RedisExecutorProxy<E extends RedisExecutor<T>, T extends J
 
     public void setPool(Pool<T> pool) {
         this.pool = pool;
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                if (RedisExecutorProxy.this.pool != null) {
-                    RedisExecutorProxy.this.pool.close();
-                }
-            }
-        }));
     }
 
     public void setCluster(JedisCluster jedisCluster) {
         this.jedisCluster = jedisCluster;
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                if (RedisExecutorProxy.this.jedisCluster != null) {
-                    RedisExecutorProxy.this.jedisCluster.close();
-                }
-            }
-        }));
     }
 
     public JedisCluster getCluster() {

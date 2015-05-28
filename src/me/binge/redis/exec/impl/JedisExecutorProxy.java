@@ -2,6 +2,7 @@ package me.binge.redis.exec.impl;
 
 import me.binge.redis.exception.RedisExecExecption;
 import me.binge.redis.exec.RedisExecutorProxy;
+import me.binge.redis.utils.Close;
 import me.binge.redis.utils.DontIntercept;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -17,6 +18,10 @@ public class JedisExecutorProxy extends RedisExecutorProxy<JedisExecutor, Jedis>
 
         if (method.getAnnotation(DontIntercept.class) != null) {
             return proxy.invokeSuper(obj, args);
+        }
+
+        if (method.getAnnotation(Close.class) != null) {
+            return proxy.invokeSuper(obj, new Object[]{pool});
         }
 
         Jedis jedis = pool.getResource();
