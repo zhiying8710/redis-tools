@@ -29,16 +29,26 @@ public abstract class RedisExecutor<T extends JedisCommands> implements JedisCom
     public abstract List<Object> multi(List<RedisCmdPair> cmdPairs) throws Exception;
 
     /**
-     * @param closeable no need a {@link Closeable} instance, null is fine, in AOP, will fill a {@link Closeable} instance.
+     * @param in AOP, will fill a {@link Closeable} instance and invoke {@link #close(Closeable)}.
      */
     @Close
-    public void close(Closeable closeable) {
+    public void close() {
+        throw new UnsupportedOperationException("");
+    }
+
+    @DontIntercept
+    void close(Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
             } catch (IOException e) {
             }
         }
+    }
+
+    @DontIntercept
+    void setThreadLocal(RedisThreadLocal<T> rtl) {
+        this.rtl = rtl;
     }
 
     @SuppressWarnings("unchecked")
@@ -48,11 +58,6 @@ public abstract class RedisExecutor<T extends JedisCommands> implements JedisCom
         } catch (Exception e) {
             throw new RedisExecExecption(cmdPair.toString(), e);
         }
-    }
-
-    @DontIntercept
-    void setThreadLocal(RedisThreadLocal<T> rtl) {
-        this.rtl = rtl;
     }
 
     @Override

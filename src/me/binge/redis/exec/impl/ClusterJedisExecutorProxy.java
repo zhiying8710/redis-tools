@@ -3,8 +3,6 @@ package me.binge.redis.exec.impl;
 import java.lang.reflect.Method;
 
 import me.binge.redis.exec.RedisExecutorProxy;
-import me.binge.redis.utils.Close;
-import me.binge.redis.utils.DontIntercept;
 import net.sf.cglib.proxy.MethodProxy;
 import redis.clients.jedis.JedisCluster;
 
@@ -14,12 +12,9 @@ public class ClusterJedisExecutorProxy extends RedisExecutorProxy<ClusterJedisEx
     public Object intercept(Object obj, Method method, Object[] args,
             MethodProxy proxy) throws Throwable {
 
-        if (method.getAnnotation(DontIntercept.class) != null) {
-            return proxy.invokeSuper(obj, args);
-        }
-
-        if (method.getAnnotation(Close.class) != null) {
-            return proxy.invokeSuper(obj, new Object[]{jedisCluster});
+        Object r = super.intercept(obj, method, args, proxy);
+        if (VOID != r) {
+            return r;
         }
 
         this.rtl.conn(jedisCluster);

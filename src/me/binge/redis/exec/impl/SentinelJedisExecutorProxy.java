@@ -4,8 +4,6 @@ import java.lang.reflect.Method;
 
 import me.binge.redis.exception.RedisExecExecption;
 import me.binge.redis.exec.RedisExecutorProxy;
-import me.binge.redis.utils.Close;
-import me.binge.redis.utils.DontIntercept;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,12 +16,9 @@ public class SentinelJedisExecutorProxy extends RedisExecutorProxy<SentinelJedis
     public Object intercept(Object obj, Method method, Object[] args,
             MethodProxy proxy) throws Throwable {
 
-        if (method.getAnnotation(DontIntercept.class) != null) {
-            return proxy.invokeSuper(obj, args);
-        }
-
-        if (method.getAnnotation(Close.class) != null) {
-            return proxy.invokeSuper(obj, new Object[]{pool});
+        Object r = super.intercept(obj, method, args, proxy);
+        if (VOID != r) {
+            return r;
         }
 
         Jedis jedis = pool.getResource();
