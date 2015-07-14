@@ -3,9 +3,9 @@ package me.binge.redis.exec;
 import java.io.Closeable;
 import java.lang.reflect.Method;
 
-import me.binge.redis.exec.impl.RedisThreadLocal;
 import me.binge.redis.utils.Close;
 import me.binge.redis.utils.DontIntercept;
+import me.binge.redis.utils.RedisThreadLocal;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;

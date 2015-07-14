@@ -8,11 +8,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import me.binge.redis.exception.RedisExecExecption;
-import me.binge.redis.exec.impl.RedisThreadLocal;
 import me.binge.redis.utils.Close;
 import me.binge.redis.utils.DontIntercept;
 import me.binge.redis.utils.EvolutionMethodUtils;
 import me.binge.redis.utils.RedisCmdPair;
+import me.binge.redis.utils.RedisThreadLocal;
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.JedisCommands;
 import redis.clients.jedis.Response;
@@ -635,7 +635,7 @@ public abstract class RedisExecutor<T extends JedisCommands> implements JedisCom
 
     @Override
     public long pfcount(String key) {
-        return this.cmd(new RedisCmdPair("pfcount", new Object[]{key}));
+        return ((Long)this.cmd(new RedisCmdPair("pfcount", new Object[]{key}))).longValue();
     }
 
     @Override
