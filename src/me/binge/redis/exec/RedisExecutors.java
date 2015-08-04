@@ -13,6 +13,7 @@ import me.binge.redis.exec.impl.JedisExecutorProxy;
 import me.binge.redis.exec.impl.SentinelJedisExecutorProxy;
 import me.binge.redis.exec.impl.ShardedJedisExecutorProxy;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.log4j.Logger;
@@ -44,6 +45,10 @@ public class RedisExecutors {
         config.setTestWhileIdle(Boolean.valueOf(props.getProperty(
                 "redis.testWhileIdle", "true")));
 
+        String passwd = props.getProperty("redis.password");
+        passwd = StringUtils.isBlank(passwd) ? null : passwd;
+        int db = Integer.valueOf(props.getProperty("redis.db", "0"));
+
         RedisExecutor<?> executor = null;
 
         Integer model = NumberUtils.createInteger(props
@@ -58,17 +63,22 @@ public class RedisExecutors {
         switch (model) {
         case 0: // 单点模式(简单主从)
             JedisExecutorProxy jedisExecutorProxy = new JedisExecutorProxy();
+
             JedisPool jedisPool = null;
+            List<String> uris = getUris(props, "redis.single.uri");
+            if (uris == null || uris.isEmpty()) {
+                throw new ExceptionInInitializerError("single uri can not be null");
+            }
             try {
-                jedisPool = new JedisPool(config, new URI(
-                        props.getProperty("redis.single.uri")), timeout);
+                URI uri = new URI(uris.get(0));
+                jedisPool = new JedisPool(config, uri.getHost(), uri.getPort(), timeout, passwd, db);
             } catch (URISyntaxException e) {
                 throw new ExceptionInInitializerError(
                         "redis.single.uri must like redis://server-ip:port");
             }
             jedisExecutorProxy.setPool(jedisPool);
             executor = jedisExecutorProxy.getExecutor();
-            logger.info("初始化RedisCacher, Redis使用单点模式(简单主从)");
+            logger.info("Init RedisExecutor, Redis use single node model.");
             break;
         case 1: // sentinel
             SentinelJedisExecutorProxy sentinelJedisExecutorProxy = new SentinelJedisExecutorProxy();
@@ -76,20 +86,20 @@ public class RedisExecutors {
                     "redis.sentinel.hostport."));
             if (sentinels.size() < 1 || sentinels.size() % 2 == 0) { // 初始化时sentinels的主机个数必须是大于1的奇数
                 throw new ExceptionInInitializerError(
-                        "sentinel 模式下初始化时sentinel的服务个数必须是大于1的奇数");
+                        "in sentinel model, sentinel's hosts count must more than 1 and it's must be a odd.");
             }
             JedisSentinelPool jedisSentinelPool = new JedisSentinelPool(
                     props.getProperty("redis.sentinel.mastername"), sentinels,
-                    config, timeout);
+                    config, timeout, passwd, db);
             sentinelJedisExecutorProxy.setPool(jedisSentinelPool);
             executor = sentinelJedisExecutorProxy.getExecutor();
-            logger.info("初始化RedisCacher, Redis使用sentinel(哨兵)模式");
+            logger.info("Init RedisExecutor, Redis use sentinel model.");
             break;
         case 2: // sharding
             ShardedJedisExecutorProxy shardedJedisExecutorProxy = new ShardedJedisExecutorProxy();
-            List<String> uris = getUris(props, "redis.sharded.uri.");
+            uris = getUris(props, "redis.sharded.uri.");
             if (uris == null || uris.isEmpty()) {
-                throw new ExceptionInInitializerError("sharded uri不能为空");
+                throw new ExceptionInInitializerError("sharded uris can not bu null");
             }
             List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>();
             for (String uri : uris) {
@@ -106,13 +116,13 @@ public class RedisExecutors {
                     shards);
             shardedJedisExecutorProxy.setPool(shardedJedisPool);
             executor = shardedJedisExecutorProxy.getExecutor();
-            logger.info("初始化RedisCacher, Redis使用sharding(分片)模式");
+            logger.info("Init RedisExecutor, Redis use sharded model.");
             break;
         case 3: // cluster
             ClusterJedisExecutorProxy clusterJedisExecutorProxy = new ClusterJedisExecutorProxy();
             uris = getUris(props, "redis.cluster.uri.");
             if (uris == null || uris.isEmpty()) {
-                throw new ExceptionInInitializerError("cluster uri不能为空");
+                throw new ExceptionInInitializerError("cluster uris can not be null.");
             }
             Set<HostAndPort> nodes = new HashSet<HostAndPort>();
             for (String uri : uris) {
@@ -127,9 +137,9 @@ public class RedisExecutors {
             JedisCluster jedisCluster = new JedisCluster(nodes, timeout, config);
             clusterJedisExecutorProxy.setCluster(jedisCluster);
             executor = clusterJedisExecutorProxy.getExecutor();
-            logger.info("初始化RedisCacher, Redis使用cluster(集群)模式");
+            logger.info("Init RedisExecutor, Redis use cluster model.");
         default:
-            throw new ExceptionInInitializerError("不支持的redis model");
+            throw new ExceptionInInitializerError("unsupported redis model.");
         }
 
         return executor;
