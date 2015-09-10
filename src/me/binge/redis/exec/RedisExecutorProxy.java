@@ -70,29 +70,13 @@ public abstract class RedisExecutorProxy<E extends RedisExecutor<T>, T extends J
             return;
         }
         if (broken) {
-            getPool().returnBrokenResource(conn);
+            this.pool.returnBrokenResource(conn);
         } else {
-            getPool().returnResource(conn);
+            this.pool.returnResource(conn);
         }
     }
 
-    public Pool<T> getPool() {
-        return this.pool;
-    }
-
     public abstract Class<E> getProxiedClass();
-
-    public void setPool(Pool<T> pool) {
-        this.pool = pool;
-    }
-
-    public void setCluster(JedisCluster jedisCluster) {
-        this.jedisCluster = jedisCluster;
-    }
-
-    public JedisCluster getCluster() {
-        return this.jedisCluster;
-    }
 
     public Closeable getCloseable() {
         if (this.pool != null) {

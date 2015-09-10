@@ -9,8 +9,16 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.apache.commons.lang3.StringUtils;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.util.Pool;
 
 public class SentinelJedisExecutorProxy extends RedisExecutorProxy<SentinelJedisExecutor, Jedis> {
+
+    public SentinelJedisExecutorProxy(Pool<Jedis> pool) {
+        if (pool == null) {
+            throw new NullPointerException("pool can not be null.");
+        }
+        this.pool = pool;
+    }
 
     @Override
     public Object intercept(Object obj, Method method, Object[] args,

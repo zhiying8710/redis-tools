@@ -8,6 +8,13 @@ import redis.clients.jedis.JedisCluster;
 
 public class ClusterJedisExecutorProxy extends RedisExecutorProxy<ClusterJedisExecutor, JedisCluster> {
 
+    public ClusterJedisExecutorProxy(JedisCluster jedisCluster) {
+        if (jedisCluster == null) {
+            throw new NullPointerException("jedisCluster can not be null.");
+        }
+        this.jedisCluster = jedisCluster;
+    }
+
     @Override
     public Object intercept(Object obj, Method method, Object[] args,
             MethodProxy proxy) throws Throwable {
