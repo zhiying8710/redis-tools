@@ -34,7 +34,7 @@ public abstract class RedisExecutor<T extends JedisCommands> implements JedisCom
      */
     @Override
     @Close
-    public void close() {
+    public void close() throws IOException {
         throw new UnsupportedOperationException("");
     }
 

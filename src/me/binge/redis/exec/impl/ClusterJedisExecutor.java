@@ -2,7 +2,6 @@ package me.binge.redis.exec.impl;
 
 import java.util.List;
 
-import me.binge.redis.exception.UnSupportMethodException;
 import me.binge.redis.exec.RedisExecutor;
 import me.binge.redis.utils.RedisCmdPair;
 import redis.clients.jedis.JedisCluster;
@@ -21,12 +20,12 @@ public class ClusterJedisExecutor extends RedisExecutor<JedisCluster> {
     @Override
     public Response<List<Object>> pipeline(List<RedisCmdPair> cmdPairs)
             throws Exception {
-        throw new UnSupportMethodException();
+        throw new UnsupportedOperationException("jedis cluster can not exec pipeline cmd.");
     }
 
     @Override
     public List<Object> multi(List<RedisCmdPair> cmdPairs) throws Exception {
-        throw new UnSupportMethodException();
+        throw new UnsupportedOperationException("jedis cluster can not exec multi cmd.");
     }
 
 }
