@@ -20,7 +20,7 @@ import redis.clients.jedis.ScanResult;
 import redis.clients.jedis.SortingParams;
 import redis.clients.jedis.Tuple;
 
-public abstract class RedisExecutor<T extends JedisCommands> implements JedisCommands {
+public abstract class RedisExecutor<T extends JedisCommands> implements JedisCommands, Closeable {
 
     protected RedisThreadLocal<T> rtl;
 
@@ -29,8 +29,10 @@ public abstract class RedisExecutor<T extends JedisCommands> implements JedisCom
     public abstract List<Object> multi(List<RedisCmdPair> cmdPairs) throws Exception;
 
     /**
-     * @param in AOP, will fill a {@link Closeable} instance and invoke {@link #close(Closeable)}.
+     * {@inheritDoc}
+     * <p>in AOP, will fill a {@link Closeable} instance and invoke {@link #close(Closeable)}.</p>
      */
+    @Override
     @Close
     public void close() {
         throw new UnsupportedOperationException("");

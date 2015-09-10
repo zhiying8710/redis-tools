@@ -15,6 +15,9 @@ import redis.clients.jedis.Response;
  */
 public class ClusterJedisExecutor extends RedisExecutor<JedisCluster> {
 
+    ClusterJedisExecutor() {
+    }
+
     @Override
     public Response<List<Object>> pipeline(List<RedisCmdPair> cmdPairs)
             throws Exception {

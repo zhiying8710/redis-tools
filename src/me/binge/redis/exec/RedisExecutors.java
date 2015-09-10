@@ -38,12 +38,13 @@ public class RedisExecutors {
                 "500")));
         config.setMaxWaitMillis(Long.valueOf(props.getProperty("redis.maxwait",
                 "30000")));
+        String sTrue = Boolean.TRUE.toString();
         config.setTestOnBorrow(Boolean.valueOf(props.getProperty(
-                "redis.testOnBorrow", "true")));
+                "redis.testOnBorrow", sTrue)));
         config.setTestOnReturn(Boolean.valueOf(props.getProperty(
-                "redis.textOnReturn", "true")));
+                "redis.textOnReturn", sTrue)));
         config.setTestWhileIdle(Boolean.valueOf(props.getProperty(
-                "redis.testWhileIdle", "true")));
+                "redis.testWhileIdle", sTrue)));
 
         String passwd = props.getProperty("redis.password");
         passwd = StringUtils.isBlank(passwd) ? null : passwd;

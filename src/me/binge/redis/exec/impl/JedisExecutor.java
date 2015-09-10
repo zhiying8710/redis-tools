@@ -12,6 +12,9 @@ import redis.clients.jedis.Transaction;
 
 public class JedisExecutor extends RedisExecutor<Jedis> {
 
+    JedisExecutor() {
+    }
+
     @Override
     public Response<List<Object>> pipeline(List<RedisCmdPair> cmdPairs) throws Exception {
 

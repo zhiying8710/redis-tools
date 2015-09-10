@@ -10,6 +10,9 @@ import redis.clients.jedis.ShardedJedis;
 
 public class ShardedJedisExecutor extends RedisExecutor<ShardedJedis> {
 
+    ShardedJedisExecutor() {
+    }
+
     @Override
     public Response<List<Object>> pipeline(List<RedisCmdPair> cmdPairs) throws UnSupportMethodException {
         throw new UnSupportMethodException();
