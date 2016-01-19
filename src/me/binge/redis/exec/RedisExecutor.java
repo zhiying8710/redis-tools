@@ -14,11 +14,19 @@ import me.binge.redis.utils.EvolutionMethodUtils;
 import me.binge.redis.utils.RedisCmdPair;
 import me.binge.redis.utils.RedisThreadLocal;
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
+import redis.clients.jedis.BitPosParams;
+import redis.clients.jedis.GeoCoordinate;
+import redis.clients.jedis.GeoRadiusResponse;
+import redis.clients.jedis.GeoUnit;
 import redis.clients.jedis.JedisCommands;
 import redis.clients.jedis.Response;
+import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
 import redis.clients.jedis.SortingParams;
 import redis.clients.jedis.Tuple;
+import redis.clients.jedis.params.geo.GeoRadiusParam;
+import redis.clients.jedis.params.sortedset.ZAddParams;
+import redis.clients.jedis.params.sortedset.ZIncrByParams;
 
 public abstract class RedisExecutor<T extends JedisCommands> implements JedisCommands, Closeable {
 
@@ -669,5 +677,125 @@ public abstract class RedisExecutor<T extends JedisCommands> implements JedisCom
     public Set<String> zrevrangeByLex(String key, String max, String min,
             int offset, int count) {
         return this.cmd(new RedisCmdPair("zrevrangeByLex", new Object[]{key, max, min, offset, count}));
+    }
+
+    @Override
+    public String set(String key, String value, String nxxx) {
+        return this.cmd(new RedisCmdPair("set", new Object[]{key, value, nxxx}));
+    }
+
+    @Override
+    public Long pttl(String key) {
+        return this.cmd(new RedisCmdPair("pttl", new Object[]{key}));
+    }
+
+    @Override
+    public String psetex(String key, long milliseconds, String value) {
+        return this.cmd(new RedisCmdPair("psetex", new Object[]{key, milliseconds, value}));
+    }
+
+    @Override
+    public Double hincrByFloat(String key, String field, double value) {
+        return this.cmd(new RedisCmdPair("hincrByFloat", new Object[]{key, field, value}));
+    }
+
+    @Override
+    public Long zadd(String key, double score, String member, ZAddParams params) {
+        return this.cmd(new RedisCmdPair("zadd", new Object[]{key, score, member, params}));
+    }
+
+    @Override
+    public Long zadd(String key, Map<String, Double> scoreMembers,
+            ZAddParams params) {
+        return this.cmd(new RedisCmdPair("zadd", new Object[]{key, scoreMembers, params}));
+    }
+
+    @Override
+    public Double zincrby(String key, double score, String member,
+            ZIncrByParams params) {
+        return this.cmd(new RedisCmdPair("zincrby", new Object[]{key, score, member, params}));
+    }
+
+    @Override
+    public Long bitpos(String key, boolean value) {
+        return this.cmd(new RedisCmdPair("bitpos", new Object[]{key, value}));
+    }
+
+    @Override
+    public Long bitpos(String key, boolean value, BitPosParams params) {
+        return this.cmd(new RedisCmdPair("bitpos", new Object[]{key, value, params}));
+    }
+
+    @Override
+    public ScanResult<Entry<String, String>> hscan(String key, String cursor,
+            ScanParams params) {
+        return this.cmd(new RedisCmdPair("hscan", new Object[]{key, cursor, params}));
+    }
+
+    @Override
+    public ScanResult<String> sscan(String key, String cursor, ScanParams params) {
+        return this.cmd(new RedisCmdPair("sscan", new Object[]{key, cursor, params}));
+    }
+
+    @Override
+    public ScanResult<Tuple> zscan(String key, String cursor, ScanParams params) {
+        return this.cmd(new RedisCmdPair("zscan", new Object[]{key, cursor, params}));
+    }
+
+    @Override
+    public Long geoadd(String key, double longitude, double latitude,
+            String member) {
+        return this.cmd(new RedisCmdPair("geoadd", new Object[]{key, longitude, latitude, member}));
+    }
+
+    @Override
+    public Long geoadd(String key,
+            Map<String, GeoCoordinate> memberCoordinateMap) {
+        return this.cmd(new RedisCmdPair("geoadd", new Object[]{key, memberCoordinateMap}));
+    }
+
+    @Override
+    public Double geodist(String key, String member1, String member2) {
+        return this.cmd(new RedisCmdPair("geodist", new Object[]{key, member1, member2}));
+    }
+
+    @Override
+    public Double geodist(String key, String member1, String member2,
+            GeoUnit unit) {
+        return this.cmd(new RedisCmdPair("geodist", new Object[]{key, member1, member2, unit}));
+    }
+
+    @Override
+    public List<String> geohash(String key, String... members) {
+        return this.cmd(new RedisCmdPair("geohash", new Object[]{key, members}));
+    }
+
+    @Override
+    public List<GeoCoordinate> geopos(String key, String... members) {
+        return this.cmd(new RedisCmdPair("geopos", new Object[]{key, members}));
+    }
+
+    @Override
+    public List<GeoRadiusResponse> georadius(String key, double longitude,
+            double latitude, double radius, GeoUnit unit) {
+        return this.cmd(new RedisCmdPair("georadius", new Object[]{key, longitude, latitude, radius, unit}));
+    }
+
+    @Override
+    public List<GeoRadiusResponse> georadius(String key, double longitude,
+            double latitude, double radius, GeoUnit unit, GeoRadiusParam param) {
+        return this.cmd(new RedisCmdPair("georadius", new Object[]{key, longitude, latitude, radius, unit, param}));
+    }
+
+    @Override
+    public List<GeoRadiusResponse> georadiusByMember(String key, String member,
+            double radius, GeoUnit unit) {
+        return this.cmd(new RedisCmdPair("georadiusByMember", new Object[]{key, member, radius, unit}));
+    }
+
+    @Override
+    public List<GeoRadiusResponse> georadiusByMember(String key, String member,
+            double radius, GeoUnit unit, GeoRadiusParam param) {
+        return this.cmd(new RedisCmdPair("georadiusByMember", new Object[]{key, member, radius, unit, param}));
     }
 }

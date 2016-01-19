@@ -65,6 +65,7 @@ public abstract class RedisExecutorProxy<E extends RedisExecutor<T>, T extends J
         return VOID;
     }
 
+    @SuppressWarnings("deprecation")
     public void release(T conn, boolean broken) {
         if (conn == null) {
             return;
